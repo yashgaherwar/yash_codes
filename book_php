@@ -1,0 +1,416 @@
+config.php
+
+<?php
+
+$db_name="mysql:host=localhost;dbname=books";
+$username="root";
+$password="";
+
+$conn=new PDO($db_name,$username,$password);
+
+?>
+
+
+
+
+
+DBConnection.php
+
+<?php
+//Establishing connection with the database
+define('DB_SERVER', 'localhost:3306');
+define('DB_USERNAME', 'root');
+define('DB_PASSWORD', '');
+define('DB_DATABASE', 'books'); //where books is the database name
+$db =mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_DATABASE);
+?>
+
+
+
+
+Delete.php
+
+<?php
+
+include "config.php";
+include "header.php";
+if (isset($_POST['delete_product'])) {
+
+    $isbn = $_POST['isbn'];
+            
+
+
+     $sql = "DELETE from `book_info` WHERE isbn = '$isbn'";
+  		 
+    		  $update_book=$conn->prepare($sql);
+              $update_book->execute([$isbn]);
+
+
+        $message[] = 'product updated successfully!';
+
+  
+
+}
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>delete products</title>
+
+    <!-- font awesome cdn link  -->
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+
+    <link rel="stylesheet" href="css/admin_style.css"> -->
+
+</head>
+
+<body>
+
+
+    <section class="update-product">
+
+        <h1 class="title">delete product</h1>
+
+        <form action="" method="post" enctype="multipart/form-data">
+
+        <input type="text" name="isbn" >
+         
+                <input type="submit" class="btn" value="delete product" name="delete_product">
+                <!-- <a href="admin_products.php" class="option-btn">go back</a> -->
+            </div>
+        </form>
+           
+</body>
+
+</html>
+
+
+
+DisplayBooks.php
+
+
+<!DOCTYPE HTML>
+<html>
+    <body bgcolor="87ceeb">
+    <center><h2>Simple Library Management System</h2></center>
+    <br>
+ 
+    <?php
+include "header.php";
+    include("DBConnection.php");
+ 
+    $search = $_REQUEST["search"];
+ 
+    $query = "select ISBN,Title,Author,Edition,Publication from book_info where title like '%$search%'"; //search with a book name in the table book_info
+    $result = mysqli_query($db,$query);
+ 
+    if(mysqli_num_rows($result)>0)if(mysqli_num_rows($result)>0)
+ 
+    {
+    ?>
+ 
+    <table border="2" align="center" cellpadding="5" cellspacing="5">
+        <tr>
+            <th> ISBN </th>
+            <th> Title </th>
+            <th> Author </th>
+            <th> Edition </th>
+            <th> Publication </th>
+        </tr>
+ 
+        <?php while($row = mysqli_fetch_assoc($result))
+        {
+        ?>
+        <tr>
+            <td><?php echo $row["ISBN"];?> </td>
+            <td><?php echo $row["Title"];?> </td>
+            <td><?php echo $row["Author"];?> </td>
+            <td><?php echo $row["Edition"];?> </td>
+            <td><?php echo $row["Publication"];?> </td>
+        </tr>
+        <?php
+        }
+        }
+        else
+        echo "<center>No books found in the library by the name $search </center>" ;
+        ?>   
+    </table>
+    </body>
+</html>
+
+
+
+
+
+
+EnterBooks.php
+
+
+<!DOCTYPE HTML>
+<html>
+<body bgcolor="87ceeb">
+<?php  include "header.php"; ?>
+    <center><h2>Book Management System</h2></center>
+    <!--Once the form is submitted, all the form data is forwarded to InsertBooks.php -->
+    <form action="InsertBooks.php" method="post">
+ 
+        <table border="2" align="center" cellpadding="5" cellspacing="5">
+            <tr>
+            <td> Enter ISBN :</td>
+            <td> <input type="text" name="isbn" size="48"> </td>
+            </tr>
+            <tr>
+            <td> Enter Title :</td>
+            <td> <input type="text" name="title" size="48"> </td>
+            </tr>
+            <tr>
+            <td> Enter Author :</td>
+            <td> <input type="text" name="author" size="48"> </td>
+            </tr>
+            <tr>
+            <td> Enter Edition :</td>
+            <td> <input type="text" name="edition" size="48"> </td>
+            </tr>
+            <tr>
+            <td> Enter Publication: </td>
+            <td> <input type="text" name="publication" size="48"> </td>
+            </tr>
+            <tr>
+            <td></td>
+            <td>
+            <input type="submit" value="submit">
+            <input type="reset" value="Reset">
+            </td>
+            </tr>
+        </table>
+    </form>
+</body>
+</html>
+
+
+
+
+
+header.php
+
+
+
+<html>
+    <title>header</title>
+    <body>
+        <style>
+         
+         body
+         {
+          margin-top:0%;
+          margin-left:0%;
+          background-image: url('bg.jpg');
+          background-repeat: no-repeat;
+          background-size: 70%;
+          background-attachment: fixed;
+          
+          background-position:center;
+          
+          z-index:1;
+         }
+          
+        ul {
+         width: 100%;
+  list-style-type: none;  
+  margin: 0;  
+  padding: 0px;  
+  overflow: hidden;  
+  background-color: lightgray;  
+}  
+  
+li {
+          align-self: flex-end;
+          float: left;  
+}  
+  
+li a {
+ 
+  display: block;  
+  color: blue;  
+ font-size:20px;  
+  text-align: center;  
+  padding: 10px 20px;  
+  text-decoration: none;  
+}  
+.active{  
+background-color: gray;  
+color: white;  
+}  
+li a:hover {  
+  background-color: orange;  
+  color: white;  
+}  
+     
+            
+        </style>
+        <ul>
+           <li><a href="index.php" >Main</a></li>
+          <li><a href="SearchBooks.php" >Search books</a></li>
+        <li><a href="EnterBooks.php">Add book</a></li>
+        <li><a href="updateBooks.php" >Update books</a>
+       
+     	<li><a href="Delete.php" >Delete books</a>
+
+
+    </ul>
+        
+    </body>
+</html>
+
+
+
+
+index.php
+
+<?php
+include "header.php";
+
+?>
+
+
+
+
+InsertBooks.php
+
+<!DOCTYPE HTML>
+<html>
+<body bgcolor="87ceeb">
+    <center><h2>Simple Library Management System</h2></center>
+    <br>
+ 
+    <?php
+include "header.php";
+        include("DBConnection.php");
+ 
+        $isbn=$_POST["isbn"];
+        $title=$_POST["title"];
+        $author=$_POST["author"];
+        $edition=$_POST["edition"];
+        $publication=$_POST["publication"];
+ 
+       
+ 	$query = "insert into book_info(isbn,title,author,edition,publication) values('$isbn','$title','$author','$edition','$publication')"; 
+  
+        $result = mysqli_query($db,$query);
+    ?>
+    <h3> Book information is inserted successfully </h3>
+ 
+    <a href="SearchBooks.php"> To search for the Book information click here </a>
+ 
+</body>
+</html>
+
+
+
+
+
+SearchBooks.php
+
+
+
+<!DOCTYPE HTML>
+<html>
+    <body bgcolor="87ceeb">
+<?php include "header.php";?>
+    <center><h2>Book Management System</h2></center>
+    <form action = "DisplayBooks.php" method="get">
+        <center>Enter the title of the book to be searched :
+        <input type="text" name="search" size="48">
+        <br></br>
+        <input type="submit" value="submit">
+        <input type="reset" value="Reset">
+        </center>
+        <br>
+        </form>
+    </body>
+</html>
+
+
+
+
+
+
+updateBooks.php
+
+
+
+<?php
+
+include "config.php";
+include "header.php";
+if (isset($_POST['update_product'])) {
+
+    $isbn = $_POST['isbn'];
+    $title = $_POST['title'];
+    $edition = $_POST['edition'];    
+    
+
+    
+
+
+     $sql = "UPDATE `book_info` SET title= '$title' , edition = '$edition' WHERE isbn = '$isbn'";
+  		 
+    		  $update_book=$conn->prepare($sql);
+              $update_book->execute([$title,$edition,$isbn]);
+
+
+        $message[] = 'product updated successfully!';
+
+  
+
+}
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>update products</title>
+
+    <!-- font awesome cdn link  -->
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+
+    <link rel="stylesheet" href="css/admin_style.css"> -->
+
+</head>
+
+<body>
+
+
+    <section class="update-product">
+
+        <h1 class="title">update product</h1>
+
+        <form action="" method="post" enctype="multipart/form-data">
+
+        <input type="text" name="isbn" >
+            <input type="text" name="title" >
+           <input type="text"  name="edition">
+                <input type="submit" class="btn" value="update product" name="update_product">
+                <!-- <a href="admin_products.php" class="option-btn">go back</a> -->
+            </div>
+        </form>
+           
+   
+
+
+
+
+</body>
+
+</html>
